@@ -87,6 +87,28 @@ export function getCanonicalExerciseOrder(sessions: Session[]): string[] {
   return order;
 }
 
+export function getFatigueSeries(sessions: Session[]) {
+  const exerciseOrder = getCanonicalExerciseOrder(sessions);
+  const keys = exerciseOrder.map((name) => ({
+    dataKey: name.replace(/\s+/g, ""),
+    label: name,
+  }));
+
+  const data = sessions.map((session) => {
+    const point: Record<string, number | null | string> = {
+      sessionId: session.session_id,
+      sessionLabel: `S${session.session_id}`,
+    };
+    for (const { dataKey, label } of keys) {
+      const exercise = session.exercises.find((e) => e.name === label);
+      point[dataKey] = exercise ? exercise.fatigue_index : null;
+    }
+    return point;
+  });
+
+  return { data, keys };
+}
+
 export function getExerciseAccuracyRanges(sessions: Session[]): ExerciseAccuracyRange[] {
   return getCanonicalExerciseOrder(sessions).map((name) => {
     const sessionsWithExercise = sessions.filter((session) =>
