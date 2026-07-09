@@ -12,11 +12,11 @@ interface KpiCardProps {
 export function KpiCard({ label, value, hint, icon: Icon }: KpiCardProps) {
   return (
     <Card>
-      <CardHeader className="flex-row items-center justify-between gap-2 space-y-0">
+      <CardHeader className="flex-row items-center  gap-2 space-y-0 flex gap-2">
+        <Icon className="size-4 text-primary" aria-hidden="true" />
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {label}
         </CardTitle>
-        <Icon className="size-4 text-muted-foreground" aria-hidden="true" />
       </CardHeader>
       <CardContent>
         <p className="text-2xl font-semibold tracking-tight">{value}</p>

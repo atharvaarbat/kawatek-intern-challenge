@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const m = require\\('lucide-react'\\); console.log\\(typeof m.Info, typeof m.TrendingUp, typeof m.Activity\\);\")"
+    ]
+  }
+}

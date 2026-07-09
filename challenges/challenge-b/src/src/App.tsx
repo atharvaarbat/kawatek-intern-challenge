@@ -1,6 +1,8 @@
 import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { SessionHistoryList } from "@/components/sessions/session-history-list";
 import { SummaryCards } from "@/components/summary/summary-cards";
+import { ProgressOverTimeChart } from "@/components/charts/progress-over-time-chart";
+import { ExerciseBreakdownChart } from "@/components/charts/exercise-breakdown-chart";
 import { EmptyState } from "@/components/states/empty-state";
 import { ErrorState } from "@/components/states/error-state";
 import { LoadingSkeleton } from "@/components/states/loading-skeleton";
@@ -28,6 +30,8 @@ function App() {
         <>
           <DashboardHeader patient={patientData.data.patient} />
           <SummaryCards data={patientData.data} />
+          <ProgressOverTimeChart sessions={patientData.data.sessions} />
+          <ExerciseBreakdownChart sessions={patientData.data.sessions} />
           <SessionHistoryList sessions={patientData.data.sessions} />
         </>
       )}

@@ -1,15 +1,11 @@
 import { Activity, ClipboardList, Target, TrendingUp } from "lucide-react";
 
 import { KpiCard } from "@/components/summary/kpi-card";
-import type { PatientSessionsData, Session } from "@/types/patient";
+import { getSessionAverageAccuracy } from "@/lib/derive-metrics";
+import type { PatientSessionsData } from "@/types/patient";
 
 interface SummaryCardsProps {
   data: PatientSessionsData;
-}
-
-function sessionAverageAccuracy(session: Session) {
-  const total = session.exercises.reduce((sum, e) => sum + e.accuracy_percent, 0);
-  return total / session.exercises.length;
 }
 
 function formatDate(iso: string) {
@@ -26,8 +22,8 @@ export function SummaryCards({ data }: SummaryCardsProps) {
   const firstSession = sessions[0];
   const latestSession = sessions[sessions.length - 1];
 
-  const latestAccuracy = Math.round(sessionAverageAccuracy(latestSession));
-  const firstAccuracy = Math.round(sessionAverageAccuracy(firstSession));
+  const latestAccuracy = Math.round(getSessionAverageAccuracy(latestSession));
+  const firstAccuracy = Math.round(getSessionAverageAccuracy(firstSession));
 
   const progressDelta =
     latestSession.overall_progress_percent - firstSession.overall_progress_percent;
