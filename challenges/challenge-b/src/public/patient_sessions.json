@@ -1,0 +1,375 @@
+{
+  "patient": {
+    "id": "RYO-2027-001",
+    "name": "Patient A",
+    "age": 34,
+    "device": "RYO Hand v3.2",
+    "start_date": "2027-07-06",
+    "therapist": "Dr. Tanaka"
+  },
+  "sessions": [
+    {
+      "session_id": 1,
+      "date": "2027-07-06",
+      "duration_minutes": 25,
+      "emg_quality_score": 0.72,
+      "overall_progress_percent": 12,
+      "exercises": [
+        {
+          "name": "Power Grip Training",
+          "repetitions": 10,
+          "accuracy_percent": 45,
+          "avg_response_time_ms": 520,
+          "fatigue_index": 0.6
+        },
+        {
+          "name": "Pinch Control",
+          "repetitions": 8,
+          "accuracy_percent": 38,
+          "avg_response_time_ms": 610,
+          "fatigue_index": 0.7
+        }
+      ]
+    },
+    {
+      "session_id": 2,
+      "date": "2027-07-08",
+      "duration_minutes": 30,
+      "emg_quality_score": 0.75,
+      "overall_progress_percent": 18,
+      "exercises": [
+        {
+          "name": "Power Grip Training",
+          "repetitions": 12,
+          "accuracy_percent": 52,
+          "avg_response_time_ms": 480,
+          "fatigue_index": 0.55
+        },
+        {
+          "name": "Pinch Control",
+          "repetitions": 10,
+          "accuracy_percent": 44,
+          "avg_response_time_ms": 570,
+          "fatigue_index": 0.65
+        },
+        {
+          "name": "Lateral Grip",
+          "repetitions": 6,
+          "accuracy_percent": 33,
+          "avg_response_time_ms": 650,
+          "fatigue_index": 0.72
+        }
+      ]
+    },
+    {
+      "session_id": 3,
+      "date": "2027-07-10",
+      "duration_minutes": 30,
+      "emg_quality_score": 0.78,
+      "overall_progress_percent": 25,
+      "exercises": [
+        {
+          "name": "Power Grip Training",
+          "repetitions": 15,
+          "accuracy_percent": 61,
+          "avg_response_time_ms": 430,
+          "fatigue_index": 0.45
+        },
+        {
+          "name": "Pinch Control",
+          "repetitions": 12,
+          "accuracy_percent": 50,
+          "avg_response_time_ms": 520,
+          "fatigue_index": 0.58
+        },
+        {
+          "name": "Lateral Grip",
+          "repetitions": 8,
+          "accuracy_percent": 40,
+          "avg_response_time_ms": 600,
+          "fatigue_index": 0.65
+        }
+      ]
+    },
+    {
+      "session_id": 4,
+      "date": "2027-07-13",
+      "duration_minutes": 35,
+      "emg_quality_score": 0.80,
+      "overall_progress_percent": 33,
+      "exercises": [
+        {
+          "name": "Power Grip Training",
+          "repetitions": 15,
+          "accuracy_percent": 68,
+          "avg_response_time_ms": 390,
+          "fatigue_index": 0.38
+        },
+        {
+          "name": "Pinch Control",
+          "repetitions": 14,
+          "accuracy_percent": 58,
+          "avg_response_time_ms": 470,
+          "fatigue_index": 0.50
+        },
+        {
+          "name": "Lateral Grip",
+          "repetitions": 10,
+          "accuracy_percent": 48,
+          "avg_response_time_ms": 550,
+          "fatigue_index": 0.58
+        },
+        {
+          "name": "Point Control",
+          "repetitions": 5,
+          "accuracy_percent": 30,
+          "avg_response_time_ms": 700,
+          "fatigue_index": 0.75
+        }
+      ]
+    },
+    {
+      "session_id": 5,
+      "date": "2027-07-15",
+      "duration_minutes": 35,
+      "emg_quality_score": 0.82,
+      "overall_progress_percent": 40,
+      "exercises": [
+        {
+          "name": "Power Grip Training",
+          "repetitions": 18,
+          "accuracy_percent": 74,
+          "avg_response_time_ms": 350,
+          "fatigue_index": 0.32
+        },
+        {
+          "name": "Pinch Control",
+          "repetitions": 15,
+          "accuracy_percent": 63,
+          "avg_response_time_ms": 440,
+          "fatigue_index": 0.45
+        },
+        {
+          "name": "Lateral Grip",
+          "repetitions": 12,
+          "accuracy_percent": 55,
+          "avg_response_time_ms": 500,
+          "fatigue_index": 0.52
+        },
+        {
+          "name": "Point Control",
+          "repetitions": 8,
+          "accuracy_percent": 38,
+          "avg_response_time_ms": 640,
+          "fatigue_index": 0.68
+        }
+      ]
+    },
+    {
+      "session_id": 6,
+      "date": "2027-07-17",
+      "duration_minutes": 40,
+      "emg_quality_score": 0.85,
+      "overall_progress_percent": 48,
+      "exercises": [
+        {
+          "name": "Power Grip Training",
+          "repetitions": 20,
+          "accuracy_percent": 78,
+          "avg_response_time_ms": 320,
+          "fatigue_index": 0.28
+        },
+        {
+          "name": "Pinch Control",
+          "repetitions": 16,
+          "accuracy_percent": 68,
+          "avg_response_time_ms": 400,
+          "fatigue_index": 0.40
+        },
+        {
+          "name": "Lateral Grip",
+          "repetitions": 14,
+          "accuracy_percent": 60,
+          "avg_response_time_ms": 460,
+          "fatigue_index": 0.48
+        },
+        {
+          "name": "Point Control",
+          "repetitions": 10,
+          "accuracy_percent": 45,
+          "avg_response_time_ms": 580,
+          "fatigue_index": 0.62
+        }
+      ]
+    },
+    {
+      "session_id": 7,
+      "date": "2027-07-20",
+      "duration_minutes": 40,
+      "emg_quality_score": 0.87,
+      "overall_progress_percent": 55,
+      "exercises": [
+        {
+          "name": "Power Grip Training",
+          "repetitions": 20,
+          "accuracy_percent": 82,
+          "avg_response_time_ms": 290,
+          "fatigue_index": 0.25
+        },
+        {
+          "name": "Pinch Control",
+          "repetitions": 18,
+          "accuracy_percent": 72,
+          "avg_response_time_ms": 370,
+          "fatigue_index": 0.36
+        },
+        {
+          "name": "Lateral Grip",
+          "repetitions": 15,
+          "accuracy_percent": 65,
+          "avg_response_time_ms": 420,
+          "fatigue_index": 0.42
+        },
+        {
+          "name": "Point Control",
+          "repetitions": 12,
+          "accuracy_percent": 52,
+          "avg_response_time_ms": 530,
+          "fatigue_index": 0.55
+        }
+      ]
+    },
+    {
+      "session_id": 8,
+      "date": "2027-07-22",
+      "duration_minutes": 45,
+      "emg_quality_score": 0.88,
+      "overall_progress_percent": 62,
+      "exercises": [
+        {
+          "name": "Power Grip Training",
+          "repetitions": 22,
+          "accuracy_percent": 85,
+          "avg_response_time_ms": 270,
+          "fatigue_index": 0.22
+        },
+        {
+          "name": "Pinch Control",
+          "repetitions": 18,
+          "accuracy_percent": 75,
+          "avg_response_time_ms": 350,
+          "fatigue_index": 0.33
+        },
+        {
+          "name": "Lateral Grip",
+          "repetitions": 16,
+          "accuracy_percent": 70,
+          "avg_response_time_ms": 390,
+          "fatigue_index": 0.38
+        },
+        {
+          "name": "Point Control",
+          "repetitions": 14,
+          "accuracy_percent": 58,
+          "avg_response_time_ms": 490,
+          "fatigue_index": 0.50
+        },
+        {
+          "name": "Combined Grip Sequence",
+          "repetitions": 5,
+          "accuracy_percent": 40,
+          "avg_response_time_ms": 720,
+          "fatigue_index": 0.78
+        }
+      ]
+    },
+    {
+      "session_id": 9,
+      "date": "2027-07-24",
+      "duration_minutes": 45,
+      "emg_quality_score": 0.90,
+      "overall_progress_percent": 68,
+      "exercises": [
+        {
+          "name": "Power Grip Training",
+          "repetitions": 22,
+          "accuracy_percent": 88,
+          "avg_response_time_ms": 250,
+          "fatigue_index": 0.20
+        },
+        {
+          "name": "Pinch Control",
+          "repetitions": 20,
+          "accuracy_percent": 78,
+          "avg_response_time_ms": 330,
+          "fatigue_index": 0.30
+        },
+        {
+          "name": "Lateral Grip",
+          "repetitions": 18,
+          "accuracy_percent": 73,
+          "avg_response_time_ms": 370,
+          "fatigue_index": 0.35
+        },
+        {
+          "name": "Point Control",
+          "repetitions": 15,
+          "accuracy_percent": 62,
+          "avg_response_time_ms": 450,
+          "fatigue_index": 0.45
+        },
+        {
+          "name": "Combined Grip Sequence",
+          "repetitions": 8,
+          "accuracy_percent": 48,
+          "avg_response_time_ms": 650,
+          "fatigue_index": 0.70
+        }
+      ]
+    },
+    {
+      "session_id": 10,
+      "date": "2027-07-27",
+      "duration_minutes": 45,
+      "emg_quality_score": 0.91,
+      "overall_progress_percent": 74,
+      "exercises": [
+        {
+          "name": "Power Grip Training",
+          "repetitions": 25,
+          "accuracy_percent": 90,
+          "avg_response_time_ms": 230,
+          "fatigue_index": 0.18
+        },
+        {
+          "name": "Pinch Control",
+          "repetitions": 20,
+          "accuracy_percent": 82,
+          "avg_response_time_ms": 310,
+          "fatigue_index": 0.28
+        },
+        {
+          "name": "Lateral Grip",
+          "repetitions": 18,
+          "accuracy_percent": 76,
+          "avg_response_time_ms": 350,
+          "fatigue_index": 0.32
+        },
+        {
+          "name": "Point Control",
+          "repetitions": 16,
+          "accuracy_percent": 67,
+          "avg_response_time_ms": 420,
+          "fatigue_index": 0.40
+        },
+        {
+          "name": "Combined Grip Sequence",
+          "repetitions": 10,
+          "accuracy_percent": 55,
+          "avg_response_time_ms": 580,
+          "fatigue_index": 0.62
+        }
+      ]
+    }
+  ]
+}
