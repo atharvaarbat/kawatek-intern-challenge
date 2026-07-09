@@ -1,22 +1,38 @@
-import { useState } from 'react'
-import {Button} from './components/ui/button'
-import { Card, CardContent } from './components/ui/card'
+import { DashboardHeader } from "@/components/layout/dashboard-header";
+import { SessionHistoryList } from "@/components/sessions/session-history-list";
+import { SummaryCards } from "@/components/summary/summary-cards";
+import { EmptyState } from "@/components/states/empty-state";
+import { ErrorState } from "@/components/states/error-state";
+import { LoadingSkeleton } from "@/components/states/loading-skeleton";
+import { usePatientData } from "@/hooks/use-patient-data";
 
 function App() {
+  const patientData = usePatientData();
 
   return (
-    <>
-    <Card>
-      <CardContent>
+    <div className="mx-auto flex max-w-6xl flex-col gap-6 p-4 sm:p-6">
+      {patientData.status === "loading" && <LoadingSkeleton />}
 
-      <Button>
-Hello
-      </Button>
-      </CardContent>
-    </Card>
+      {patientData.status === "error" && (
+        <ErrorState message={patientData.message} />
+      )}
 
-    </>
-  )
+      {patientData.status === "empty" && (
+        <>
+          <DashboardHeader patient={patientData.patient} />
+          <EmptyState patientName={patientData.patient.name} />
+        </>
+      )}
+
+      {patientData.status === "success" && (
+        <>
+          <DashboardHeader patient={patientData.data.patient} />
+          <SummaryCards data={patientData.data} />
+          <SessionHistoryList sessions={patientData.data.sessions} />
+        </>
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
