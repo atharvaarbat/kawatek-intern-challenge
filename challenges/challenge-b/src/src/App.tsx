@@ -4,6 +4,7 @@ import { SummaryCards } from "@/components/summary/summary-cards";
 import { ProgressOverTimeChart } from "@/components/charts/progress-over-time-chart";
 import { ExerciseBreakdownChart } from "@/components/charts/exercise-breakdown-chart";
 import { FatigueAnalysisChart } from "@/components/charts/fatigue-analysis-chart";
+import { RecommendationsPanel } from "@/components/recommendations/recommendations-panel";
 import { EmptyState } from "@/components/states/empty-state";
 import { ErrorState } from "@/components/states/error-state";
 import { LoadingSkeleton } from "@/components/states/loading-skeleton";
@@ -32,7 +33,10 @@ function App() {
           <DashboardHeader patient={patientData.data.patient} />
           <SummaryCards data={patientData.data} />
           <ProgressOverTimeChart sessions={patientData.data.sessions} />
-          <ExerciseBreakdownChart sessions={patientData.data.sessions} />
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <ExerciseBreakdownChart sessions={patientData.data.sessions} />
+            <RecommendationsPanel data={patientData.data} />
+          </div>
           <FatigueAnalysisChart sessions={patientData.data.sessions} />
           <SessionHistoryList sessions={patientData.data.sessions} />
         </>
