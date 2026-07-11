@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,8 +10,19 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ChartTableFallback } from "@/components/charts/chart-table-fallback";
-import { getExerciseAccuracyRanges, type ExerciseAccuracyRange } from "@/lib/derive-metrics";
+import {
+  getCanonicalExerciseOrder,
+  getExerciseAccuracyRanges,
+  type ExerciseAccuracyRange,
+} from "@/lib/derive-metrics";
 import type { Session } from "@/types/patient";
 
 interface ExerciseBreakdownChartProps {
@@ -29,7 +41,12 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ExerciseBreakdownChart({ sessions }: ExerciseBreakdownChartProps) {
-  const data = getExerciseAccuracyRanges(sessions);
+  const [filterExercise, setFilterExercise] = useState("all");
+
+  const exercises = getCanonicalExerciseOrder(sessions);
+  const allData = getExerciseAccuracyRanges(sessions);
+  const data = filterExercise === "all" ? allData : allData.filter((d) => d.name === filterExercise);
+
   const chartHeight = Math.max(data.length * 56, 200);
 
   const tableRows = data.map((d) => {
@@ -44,11 +61,26 @@ export function ExerciseBreakdownChart({ sessions }: ExerciseBreakdownChartProps
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex-row items-center justify-between flex gap-2 space-y-0">
         <CardTitle>Exercise Breakdown</CardTitle>
+        <Select value={filterExercise} onValueChange={setFilterExercise}>
+          <SelectTrigger className="w-48" aria-label="Filter by exercise">
+            <SelectValue placeholder="All exercises" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All exercises</SelectItem>
+            {exercises.map((name) => (
+              <SelectItem key={name} value={name}>
+                {name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </CardHeader>
       <CardContent>
-        <figure aria-label={`Bar chart comparing first-recorded vs latest accuracy for ${data.length} exercises`}>
+        <figure
+          aria-label={`Bar chart comparing first-recorded vs latest accuracy for ${data.length} exercise${data.length === 1 ? "" : "s"}`}
+        >
           <ChartContainer
             config={chartConfig}
             className="aspect-auto w-full"

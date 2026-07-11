@@ -39,6 +39,7 @@ export function FatigueAnalysisChart({ sessions }: FatigueAnalysisChartProps) {
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
     String(sessions[sessions.length - 1].session_id),
   );
+  const [filterExercise, setFilterExercise] = useState("all");
 
   const chartConfig = keys.reduce<ChartConfig>((config, { dataKey, label }, index) => {
     config[dataKey] = {
@@ -80,7 +81,22 @@ export function FatigueAnalysisChart({ sessions }: FatigueAnalysisChartProps) {
           </TabsList>
 
           <TabsContent value="across">
-            <figure aria-label={`Line chart of fatigue index trends across ${sessions.length} sessions for ${keys.length} exercises`}>
+            <div className="mb-4">
+              <Select value={filterExercise} onValueChange={setFilterExercise}>
+                <SelectTrigger className="w-48" aria-label="Filter by exercise">
+                  <SelectValue placeholder="All exercises" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All exercises</SelectItem>
+                  {keys.map(({ dataKey, label }) => (
+                    <SelectItem key={dataKey} value={dataKey}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <figure aria-label={`Line chart of fatigue index trends across ${sessions.length} sessions for ${filterExercise === "all" ? keys.length : 1} exercise${filterExercise === "all" && keys.length !== 1 ? "s" : ""}`}>
               <ChartContainer config={chartConfig} className="aspect-auto h-72 w-full">
                 <LineChart accessibilityLayer data={data} margin={{ left: -16, right: 12 }}>
                   <CartesianGrid vertical={false} />
@@ -94,17 +110,19 @@ export function FatigueAnalysisChart({ sessions }: FatigueAnalysisChartProps) {
                   />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <ChartLegend content={<ChartLegendContent />} />
-                  {keys.map(({ dataKey }) => (
-                    <Line
-                      key={dataKey}
-                      dataKey={dataKey}
-                      type="monotone"
-                      stroke={`var(--color-${dataKey})`}
-                      strokeWidth={2}
-                      dot={false}
-                      connectNulls={false}
-                    />
-                  ))}
+                  {keys
+                    .filter(({ dataKey }) => filterExercise === "all" || dataKey === filterExercise)
+                    .map(({ dataKey }) => (
+                      <Line
+                        key={dataKey}
+                        dataKey={dataKey}
+                        type="monotone"
+                        stroke={`var(--color-${dataKey})`}
+                        strokeWidth={2}
+                        dot={false}
+                        connectNulls={false}
+                      />
+                    ))}
                 </LineChart>
               </ChartContainer>
             </figure>

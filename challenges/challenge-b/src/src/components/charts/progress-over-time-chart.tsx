@@ -1,5 +1,5 @@
 import { Info } from "lucide-react";
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import { CartesianGrid, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/chart";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ChartTableFallback } from "@/components/charts/chart-table-fallback";
-import { getAccuracyDipNotes, getProgressSeries } from "@/lib/derive-metrics";
+import { getAccuracyDipNotes, getProgressSeriesWithPrediction } from "@/lib/derive-metrics";
 import type { Session } from "@/types/patient";
 
 interface ProgressOverTimeChartProps {
@@ -28,23 +28,36 @@ const chartConfig = {
     label: "Avg Accuracy",
     color: "var(--chart-2)",
   },
+  predictedProgress: {
+    label: "Predicted",
+    color: "var(--chart-3)",
+  },
 } satisfies ChartConfig;
 
 export function ProgressOverTimeChart({ sessions }: ProgressOverTimeChartProps) {
-  const data = getProgressSeries(sessions);
+  const { data, projectedAt } = getProgressSeriesWithPrediction(sessions);
   const dipNotes = getAccuracyDipNotes(sessions);
 
-  const tableRows = data.map((d) => [
-    d.sessionLabel,
-    d.date,
-    `${d.overallProgress}%`,
-    `${d.averageAccuracy}%`,
-  ]);
+  const tableRows = data
+    .filter((d) => d.date !== "")
+    .map((d) => [
+      d.sessionLabel,
+      d.date,
+      d.overallProgress != null ? `${d.overallProgress}%` : "—",
+      d.averageAccuracy != null ? `${d.averageAccuracy}%` : "—",
+    ]);
 
   return (
     <Card>
       <CardHeader className="flex-row items-center justify-between flex gap-2 space-y-0">
-        <CardTitle>Progress Over Time</CardTitle>
+        <div>
+          <CardTitle>Progress Over Time</CardTitle>
+          {projectedAt && (
+            <p className="text-sm text-muted-foreground mt-0.5">
+              Projected completion: {projectedAt}
+            </p>
+          )}
+        </div>
         {dipNotes.size > 0 && (
           <Tooltip>
             <TooltipTrigger
@@ -60,7 +73,9 @@ export function ProgressOverTimeChart({ sessions }: ProgressOverTimeChartProps) 
         )}
       </CardHeader>
       <CardContent>
-        <figure aria-label={`Line chart: overall progress rose from ${data[0]?.overallProgress}% (S1) to ${data[data.length - 1]?.overallProgress}% (S${sessions.length}) over ${sessions.length} sessions`}>
+        <figure
+          aria-label={`Line chart: overall progress rose from ${data[0]?.overallProgress}% (S1) to ${sessions[sessions.length - 1].overall_progress_percent}% (S${sessions.length}) over ${sessions.length} sessions${projectedAt ? `. Projected completion at ${projectedAt}` : ""}`}
+        >
           <ChartContainer config={chartConfig} className="aspect-auto h-72 w-full">
             <LineChart accessibilityLayer data={data} margin={{ left: -16, right: 12 }}>
               <CartesianGrid vertical={false} />
@@ -80,6 +95,7 @@ export function ProgressOverTimeChart({ sessions }: ProgressOverTimeChartProps) 
                 stroke="var(--color-overallProgress)"
                 strokeWidth={2}
                 dot={false}
+                connectNulls={false}
               />
               <Line
                 dataKey="averageAccuracy"
@@ -87,7 +103,25 @@ export function ProgressOverTimeChart({ sessions }: ProgressOverTimeChartProps) 
                 stroke="var(--color-averageAccuracy)"
                 strokeWidth={2}
                 dot={false}
+                connectNulls={false}
               />
+              <Line
+                dataKey="predictedProgress"
+                type="monotone"
+                stroke="var(--color-predictedProgress)"
+                strokeWidth={2}
+                strokeDasharray="5 4"
+                dot={false}
+                connectNulls={false}
+              />
+              {projectedAt && (
+                <ReferenceLine
+                  x={projectedAt}
+                  stroke="var(--color-predictedProgress)"
+                  strokeDasharray="3 3"
+                  label={{ value: projectedAt, position: "top", fontSize: 11 }}
+                />
+              )}
             </LineChart>
           </ChartContainer>
         </figure>

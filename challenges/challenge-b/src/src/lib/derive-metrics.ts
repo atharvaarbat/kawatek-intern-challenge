@@ -109,6 +109,81 @@ export function getFatigueSeries(sessions: Session[]) {
   return { data, keys };
 }
 
+// ─── Progress prediction ───────────────────────────────────────────────────
+
+function linearRegression(xs: number[], ys: number[]): { slope: number; intercept: number } | null {
+  const n = xs.length;
+  const sumX = xs.reduce((a, b) => a + b, 0);
+  const sumY = ys.reduce((a, b) => a + b, 0);
+  const sumXY = xs.reduce((s, x, i) => s + x * ys[i], 0);
+  const sumX2 = xs.reduce((s, x) => s + x * x, 0);
+  const denom = n * sumX2 - sumX * sumX;
+  if (denom === 0) return null;
+  const slope = (n * sumXY - sumX * sumY) / denom;
+  const intercept = (sumY - slope * sumX) / n;
+  return { slope, intercept };
+}
+
+export interface ProgressChartPoint {
+  sessionId: number;
+  sessionLabel: string;
+  date: string;
+  overallProgress: number | null;
+  averageAccuracy: number | null;
+  predictedProgress: number | null;
+}
+
+/**
+ * Returns the progress series extended with a linear-regression prediction
+ * that extrapolates until overall progress reaches 100%.
+ * Returns null for projectedAt when a prediction can't be made (too few sessions,
+ * flat/declining trend, or already complete).
+ */
+export function getProgressSeriesWithPrediction(sessions: Session[]): {
+  data: ProgressChartPoint[];
+  projectedAt: string | null;
+} {
+  const last = sessions[sessions.length - 1];
+
+  const actual: ProgressChartPoint[] = sessions.map((s) => ({
+    sessionId: s.session_id,
+    sessionLabel: `S${s.session_id}`,
+    date: s.date,
+    overallProgress: s.overall_progress_percent,
+    averageAccuracy: Math.round(getSessionAverageAccuracy(s) * 10) / 10,
+    predictedProgress: null,
+  }));
+
+  if (last.overall_progress_percent >= 100 || sessions.length < 3) {
+    return { data: actual, projectedAt: null };
+  }
+
+  const reg = linearRegression(
+    sessions.map((_, i) => i),
+    sessions.map((s) => s.overall_progress_percent),
+  );
+
+  if (!reg || reg.slope <= 0) {
+    return { data: actual, projectedAt: null };
+  }
+
+  // Bridge point: last actual session also carries predictedProgress so the
+  // dashed line starts exactly where the solid line ends (no visible gap).
+  actual[actual.length - 1].predictedProgress = last.overall_progress_percent;
+
+  const future: ProgressChartPoint[] = [];
+  let projectedAt: string | null = null;
+
+  for (let i = 1; i <= 12; i++) {
+    const predicted = Math.min(Math.round(reg.slope * (sessions.length - 1 + i) + reg.intercept), 100);
+    const sessionLabel = `S${last.session_id + i}`;
+    future.push({ sessionId: last.session_id + i, sessionLabel, date: "", overallProgress: null, averageAccuracy: null, predictedProgress: predicted });
+    if (predicted >= 100) { projectedAt = sessionLabel; break; }
+  }
+
+  return { data: [...actual, ...future], projectedAt };
+}
+
 export function getExerciseAccuracyRanges(sessions: Session[]): ExerciseAccuracyRange[] {
   return getCanonicalExerciseOrder(sessions).map((name) => {
     const sessionsWithExercise = sessions.filter((session) =>
