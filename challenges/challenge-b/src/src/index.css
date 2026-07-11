@@ -126,3 +126,27 @@
     cursor: pointer;}
   html {
     @apply font-sans;}}
+
+/* ── Print styles ──────────────────────────────────────────────────────── */
+/* Print the dashboard exactly as shown on screen. Light mode is forced by
+   removing the `dark` class on beforeprint (see theme-provider), so no color
+   overrides are needed here. */
+@media print {
+  @page {
+    margin: 1.5cm;
+    size: A4 portrait;
+  }
+
+  /* Keep chart fills, badges, and card surfaces from being stripped to white */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Don't split a card or a session row across a page break */
+  [data-slot="card"],
+  [data-slot="accordion-item"] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}

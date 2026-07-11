@@ -47,7 +47,7 @@ export function SessionListItem({
           onCheckedChange={() => onToggleSelect(session.session_id)}
           aria-label={`Select Session ${session.session_id} for comparison`}
           aria-describedby={isDisabled ? MAX_HINT_ID : undefined}
-          className="ml-1 shrink-0"
+          className="ml-1 shrink-0 print:hidden"
         />
         <AccordionTrigger headerClassName="flex-1">
           <div className="flex min-w-0 flex-1 flex-wrap items-center justify-between gap-2 pr-2">
