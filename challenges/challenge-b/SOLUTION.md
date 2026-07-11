@@ -113,15 +113,13 @@ To generate a PDF report, click **Export PDF** in the header. The live simulatio
 
 ## Screenshots
 
-<!-- Dashboard - light mode -->
+![Dashboard](./screenshots/1.png)
 
-<!-- Dashboard - dark mode -->
+![Chart 1](./screenshots/2.png)
 
-<!-- Session comparison dialog -->
+![Chart 2](./screenshots/3.png)
 
-<!-- Recommendation panel -->
-
-<!-- Print/PDF export -->
+![Compare](./screenshots/4.png)
 
 ---
 
@@ -134,6 +132,8 @@ To generate a PDF report, click **Export PDF** in the header. The live simulatio
 **Export to PDF** - `window.print()` with a custom `@media print` stylesheet: A4 portrait, 1.5cm margins, colour-adjust forced so chart fills survive the print pipeline, and charts are resized in JS via the `beforeprint` event so Recharts renders at the correct page width rather than the screen width.
 
 **Live simulation** - `useLiveSimulation` generates plausible next sessions every 2.5 seconds using a simple trajectory model (accuracy rises, fatigue falls, response time drops). The hook reconciles with the real fetch data if it changes, auto-stops when the patient hits 100% progress or the 20-session cap, and exposes a reset to restore the original data. All charts, the recommendation panel, and the KPI cards respond to the simulated data in real time.
+
+> My personal favorite feature of the live simulation is the **progress prediction**. It's a fun little side effect of the trajectory model
 
 **Progress prediction** - The Progress Over Time chart extends its solid lines with a dashed prediction line showing where overall progress is headed. Under the hood it's a least-squares linear regression over the session indices — nothing fancy, but accurate enough for a short-horizon rehab timeline. The bridge point technique sets `predictedProgress` on the last real session so the dashed line starts exactly where the solid line ends with no visual gap. If the trend line reaches 100%, a vertical `ReferenceLine` marks that session and a "Projected completion: S{n}" label appears under the chart title. If progress is already complete, trending flat, or there are fewer than 3 sessions (not enough signal), no prediction is shown.
 
