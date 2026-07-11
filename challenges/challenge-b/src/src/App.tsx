@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
+import { SimulateButton } from "@/components/layout/simulate-button";
 import { SkipLink } from "@/components/layout/skip-link";
 import { SessionHistoryList } from "@/components/sessions/session-history-list";
 import { SummaryCards } from "@/components/summary/summary-cards";
@@ -13,11 +14,20 @@ import { EmptyState } from "@/components/states/empty-state";
 import { ErrorState } from "@/components/states/error-state";
 import { LoadingSkeleton } from "@/components/states/loading-skeleton";
 import { usePatientData } from "@/hooks/use-patient-data";
+import { useLiveSimulation } from "@/hooks/use-live-simulation";
+import type { Session } from "@/types/patient";
+
+const NO_SESSIONS: Session[] = [];
 
 function App() {
   const patientData = usePatientData();
+  const baseSessions =
+    patientData.status === "success" ? patientData.data.sessions : NO_SESSIONS;
+  const simulation = useLiveSimulation(baseSessions);
   const [selectedSessionIds, setSelectedSessionIds] = useState<number[]>([]);
   const [compareOpen, setCompareOpen] = useState(false);
+
+  const sessions = simulation.sessions;
 
   function toggleSessionSelect(id: number) {
     setSelectedSessionIds((prev) => {
@@ -27,13 +37,10 @@ function App() {
     });
   }
 
-  const selectedSessions =
-    patientData.status === "success"
-      ? selectedSessionIds
-          .map((id) => patientData.data.sessions.find((s) => s.session_id === id)!)
-          .filter(Boolean)
-          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-      : [];
+  const selectedSessions = selectedSessionIds
+    .map((id) => sessions.find((s) => s.session_id === id))
+    .filter((s): s is Session => s !== undefined)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return (
     <>
@@ -54,18 +61,23 @@ function App() {
 
         {patientData.status === "success" && (
           <>
-            <DashboardHeader patient={patientData.data.patient} />
+            <DashboardHeader
+              patient={patientData.data.patient}
+              actions={<SimulateButton simulation={simulation} />}
+            />
             <main id="main-content">
               <div className="flex flex-col gap-6">
-                <SummaryCards data={patientData.data} />
-                <ProgressOverTimeChart sessions={patientData.data.sessions} />
+                <SummaryCards data={{ patient: patientData.data.patient, sessions }} />
+                <ProgressOverTimeChart sessions={sessions} />
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                  <ExerciseBreakdownChart sessions={patientData.data.sessions} />
-                  <RecommendationsPanel data={patientData.data} />
+                  <ExerciseBreakdownChart sessions={sessions} />
+                  <RecommendationsPanel
+                    data={{ patient: patientData.data.patient, sessions }}
+                  />
                 </div>
-                <FatigueAnalysisChart sessions={patientData.data.sessions} />
+                <FatigueAnalysisChart sessions={sessions} />
                 <SessionHistoryList
-                  sessions={patientData.data.sessions}
+                  sessions={sessions}
                   selectedSessionIds={selectedSessionIds}
                   onToggleSelect={toggleSessionSelect}
                 />
