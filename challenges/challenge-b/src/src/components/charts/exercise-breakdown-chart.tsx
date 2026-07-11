@@ -9,6 +9,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { ChartTableFallback } from "@/components/charts/chart-table-fallback";
 import { getExerciseAccuracyRanges, type ExerciseAccuracyRange } from "@/lib/derive-metrics";
 import type { Session } from "@/types/patient";
 
@@ -31,52 +32,66 @@ export function ExerciseBreakdownChart({ sessions }: ExerciseBreakdownChartProps
   const data = getExerciseAccuracyRanges(sessions);
   const chartHeight = Math.max(data.length * 56, 200);
 
+  const tableRows = data.map((d) => [
+    d.name,
+    `${d.firstAccuracy}% (${d.firstSessionLabel})`,
+    `${d.latestAccuracy}% (${d.latestSessionLabel})`,
+    `+${d.latestAccuracy - d.firstAccuracy}%`,
+  ]);
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Exercise Breakdown</CardTitle>
       </CardHeader>
       <CardContent>
-        <ChartContainer
-          config={chartConfig}
-          className="aspect-auto w-full"
-          style={{ height: chartHeight }}
-        >
-          <BarChart accessibilityLayer data={data} layout="vertical" margin={{ left: 12 }}>
-            <CartesianGrid horizontal={false} />
-            <XAxis
-              type="number"
-              domain={[0, 100]}
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value: number) => `${value}%`}
-            />
-            <YAxis type="category" dataKey="name" tickLine={false} axisLine={false} width={140} />
-            <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  formatter={(value, name, item) => {
-                    const row = item.payload as ExerciseAccuracyRange;
-                    const isFirst = name === "firstAccuracy";
-                    const sessionLabel = isFirst ? row.firstSessionLabel : row.latestSessionLabel;
-                    return (
-                      <div className="flex w-full items-center justify-between gap-4">
-                        <span className="text-muted-foreground">
-                          {isFirst ? "First recorded" : "Latest"} ({sessionLabel})
-                        </span>
-                        <span className="font-mono font-medium tabular-nums">{value}%</span>
-                      </div>
-                    );
-                  }}
-                />
-              }
-            />
-            <ChartLegend content={<ChartLegendContent />} />
-            <Bar dataKey="firstAccuracy" fill="var(--color-firstAccuracy)" radius={4} />
-            <Bar dataKey="latestAccuracy" fill="var(--color-latestAccuracy)" radius={4} />
-          </BarChart>
-        </ChartContainer>
+        <figure aria-label={`Bar chart comparing first-recorded vs latest accuracy for ${data.length} exercises`}>
+          <ChartContainer
+            config={chartConfig}
+            className="aspect-auto w-full"
+            style={{ height: chartHeight }}
+          >
+            <BarChart accessibilityLayer data={data} layout="vertical" margin={{ left: 12 }}>
+              <CartesianGrid horizontal={false} />
+              <XAxis
+                type="number"
+                domain={[0, 100]}
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                tickFormatter={(value: number) => `${value}%`}
+              />
+              <YAxis type="category" dataKey="name" tickLine={false} axisLine={false} width={140} />
+              <ChartTooltip
+                content={
+                  <ChartTooltipContent
+                    formatter={(value, name, item) => {
+                      const row = item.payload as ExerciseAccuracyRange;
+                      const isFirst = name === "firstAccuracy";
+                      const sessionLabel = isFirst ? row.firstSessionLabel : row.latestSessionLabel;
+                      return (
+                        <div className="flex w-full items-center justify-between gap-4">
+                          <span className="text-muted-foreground">
+                            {isFirst ? "First recorded" : "Latest"} ({sessionLabel})
+                          </span>
+                          <span className="font-mono font-medium tabular-nums">{value}%</span>
+                        </div>
+                      );
+                    }}
+                  />
+                }
+              />
+              <ChartLegend content={<ChartLegendContent />} />
+              <Bar dataKey="firstAccuracy" fill="var(--color-firstAccuracy)" radius={4} />
+              <Bar dataKey="latestAccuracy" fill="var(--color-latestAccuracy)" radius={4} />
+            </BarChart>
+          </ChartContainer>
+        </figure>
+        <ChartTableFallback
+          caption="Exercise accuracy — first recorded vs latest"
+          headers={["Exercise", "First Recorded", "Latest", "Change"]}
+          rows={tableRows}
+        />
       </CardContent>
     </Card>
   );

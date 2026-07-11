@@ -3,6 +3,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -15,7 +16,12 @@ import type { Session } from "@/types/patient";
 
 interface SessionListItemProps {
   session: Session;
+  isSelected: boolean;
+  isDisabled: boolean;
+  onToggleSelect: (id: number) => void;
 }
+
+const MAX_HINT_ID = "compare-max-hint";
 
 function formatDate(iso: string) {
   const [year, month, day] = iso.split("-").map(Number);
@@ -26,26 +32,41 @@ function formatDate(iso: string) {
   });
 }
 
-export function SessionListItem({ session }: SessionListItemProps) {
+export function SessionListItem({
+  session,
+  isSelected,
+  isDisabled,
+  onToggleSelect,
+}: SessionListItemProps) {
   return (
     <AccordionItem value={session.session_id}>
-      <AccordionTrigger>
-        <div className="flex min-w-0 flex-1 flex-wrap items-center justify-between gap-2 pr-2">
-          <div className="flex flex-col items-start gap-0.5">
-            <span className="font-medium">
-              Session {session.session_id} · {formatDate(session.date)}
-            </span>
-            <span className="text-xs font-normal text-muted-foreground">
-              {session.duration_minutes} min · {session.exercises.length}{" "}
-              exercises
-            </span>
+      <div className="flex items-center gap-2">
+        <Checkbox
+          checked={isSelected}
+          disabled={isDisabled}
+          onCheckedChange={() => onToggleSelect(session.session_id)}
+          aria-label={`Select Session ${session.session_id} for comparison`}
+          aria-describedby={isDisabled ? MAX_HINT_ID : undefined}
+          className="ml-1 shrink-0"
+        />
+        <AccordionTrigger headerClassName="flex-1">
+          <div className="flex min-w-0 flex-1 flex-wrap items-center justify-between gap-2 pr-2">
+            <div className="flex flex-col items-start gap-0.5">
+              <span className="font-medium">
+                Session {session.session_id} · {formatDate(session.date)}
+              </span>
+              <span className="text-xs font-normal text-muted-foreground">
+                {session.duration_minutes} min · {session.exercises.length}{" "}
+                exercises
+              </span>
+            </div>
+            <div className="flex items-center gap-3 text-xs font-normal text-muted-foreground">
+              <span>Progress {session.overall_progress_percent}%</span>
+              <span>EMG {Math.round(session.emg_quality_score * 100)}%</span>
+            </div>
           </div>
-          <div className="flex items-center gap-3 text-xs font-normal text-muted-foreground">
-            <span>Progress {session.overall_progress_percent}%</span>
-            <span>EMG {Math.round(session.emg_quality_score * 100)}%</span>
-          </div>
-        </div>
-      </AccordionTrigger>
+        </AccordionTrigger>
+      </div>
       <AccordionContent>
         <Table>
           <TableHeader>
@@ -81,3 +102,5 @@ export function SessionListItem({ session }: SessionListItemProps) {
     </AccordionItem>
   );
 }
+
+export { MAX_HINT_ID };

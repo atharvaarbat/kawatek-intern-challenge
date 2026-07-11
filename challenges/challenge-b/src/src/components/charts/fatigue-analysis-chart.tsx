@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ChartTableFallback } from "@/components/charts/chart-table-fallback";
 import { getCanonicalExerciseOrder, getFatigueSeries } from "@/lib/derive-metrics";
 import type { Session } from "@/types/patient";
 
@@ -59,6 +60,14 @@ export function FatigueAnalysisChart({ sessions }: FatigueAnalysisChartProps) {
       }))
     : [];
 
+  const acrossTableHeaders = ["Session", ...keys.map((k) => k.label)];
+  const acrossTableRows = data.map((d) => [
+    String(d.sessionLabel),
+    ...keys.map((k) => (d[k.dataKey] != null ? String((d[k.dataKey] as number).toFixed(2)) : "—")),
+  ]);
+
+  const withinTableRows = withinSessionData.map((d) => [d.name, d.fatigue_index.toFixed(2)]);
+
   return (
     <Card>
       <CardHeader>
@@ -72,32 +81,39 @@ export function FatigueAnalysisChart({ sessions }: FatigueAnalysisChartProps) {
           </TabsList>
 
           <TabsContent value="across">
-            <ChartContainer config={chartConfig} className="aspect-auto h-72 w-full">
-              <LineChart accessibilityLayer data={data} margin={{ left: -16, right: 12 }}>
-                <CartesianGrid vertical={false} />
-                <XAxis dataKey="sessionLabel" tickLine={false} axisLine={false} tickMargin={8} />
-                <YAxis
-                  domain={[0, 1]}
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tickFormatter={(value: number) => value.toFixed(1)}
-                />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <ChartLegend content={<ChartLegendContent />} />
-                {keys.map(({ dataKey }) => (
-                  <Line
-                    key={dataKey}
-                    dataKey={dataKey}
-                    type="monotone"
-                    stroke={`var(--color-${dataKey})`}
-                    strokeWidth={2}
-                    dot={false}
-                    connectNulls={false}
+            <figure aria-label={`Line chart of fatigue index trends across ${sessions.length} sessions for ${keys.length} exercises`}>
+              <ChartContainer config={chartConfig} className="aspect-auto h-72 w-full">
+                <LineChart accessibilityLayer data={data} margin={{ left: -16, right: 12 }}>
+                  <CartesianGrid vertical={false} />
+                  <XAxis dataKey="sessionLabel" tickLine={false} axisLine={false} tickMargin={8} />
+                  <YAxis
+                    domain={[0, 1]}
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    tickFormatter={(value: number) => value.toFixed(1)}
                   />
-                ))}
-              </LineChart>
-            </ChartContainer>
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <ChartLegend content={<ChartLegendContent />} />
+                  {keys.map(({ dataKey }) => (
+                    <Line
+                      key={dataKey}
+                      dataKey={dataKey}
+                      type="monotone"
+                      stroke={`var(--color-${dataKey})`}
+                      strokeWidth={2}
+                      dot={false}
+                      connectNulls={false}
+                    />
+                  ))}
+                </LineChart>
+              </ChartContainer>
+            </figure>
+            <ChartTableFallback
+              caption="Fatigue index by exercise across sessions"
+              headers={acrossTableHeaders}
+              rows={acrossTableRows}
+            />
           </TabsContent>
 
           <TabsContent value="within">
@@ -115,41 +131,48 @@ export function FatigueAnalysisChart({ sessions }: FatigueAnalysisChartProps) {
                 </SelectContent>
               </Select>
             </div>
-            <ChartContainer config={chartConfig} className="aspect-auto h-72 w-full">
-              <BarChart accessibilityLayer data={withinSessionData} margin={{ left: -16, right: 12 }}>
-                <CartesianGrid horizontal={false} />
-                <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={8} width={140} />
-                <YAxis
-                  domain={[0, 1]}
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tickFormatter={(value: number) => value.toFixed(1)}
-                />
-                <ChartTooltip
-                  content={
-                    <ChartTooltipContent
-                      formatter={(value) => (
-                        <span className="font-mono font-medium tabular-nums">
-                          {typeof value === "number" ? value.toFixed(2) : value}
-                        </span>
-                      )}
-                    />
-                  }
-                />
-                <Bar dataKey="fatigue_index" radius={4}>
-                  {withinSessionData.map((entry) => {
-                    const exerciseIndex = exercises.indexOf(entry.name);
-                    return (
-                      <Cell
-                        key={entry.name}
-                        fill={EXERCISE_COLORS[exerciseIndex % EXERCISE_COLORS.length]}
+            <figure aria-label={`Bar chart of fatigue index per exercise for Session ${selectedSessionId}`}>
+              <ChartContainer config={chartConfig} className="aspect-auto h-72 w-full">
+                <BarChart accessibilityLayer data={withinSessionData} margin={{ left: -16, right: 12 }}>
+                  <CartesianGrid horizontal={false} />
+                  <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={8} width={140} />
+                  <YAxis
+                    domain={[0, 1]}
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    tickFormatter={(value: number) => value.toFixed(1)}
+                  />
+                  <ChartTooltip
+                    content={
+                      <ChartTooltipContent
+                        formatter={(value) => (
+                          <span className="font-mono font-medium tabular-nums">
+                            {typeof value === "number" ? value.toFixed(2) : value}
+                          </span>
+                        )}
                       />
-                    );
-                  })}
-                </Bar>
-              </BarChart>
-            </ChartContainer>
+                    }
+                  />
+                  <Bar dataKey="fatigue_index" radius={4}>
+                    {withinSessionData.map((entry) => {
+                      const exerciseIndex = exercises.indexOf(entry.name);
+                      return (
+                        <Cell
+                          key={entry.name}
+                          fill={EXERCISE_COLORS[exerciseIndex % EXERCISE_COLORS.length]}
+                        />
+                      );
+                    })}
+                  </Bar>
+                </BarChart>
+              </ChartContainer>
+            </figure>
+            <ChartTableFallback
+              caption={`Fatigue index by exercise for Session ${selectedSessionId}`}
+              headers={["Exercise", "Fatigue Index"]}
+              rows={withinTableRows}
+            />
           </TabsContent>
         </Tabs>
       </CardContent>

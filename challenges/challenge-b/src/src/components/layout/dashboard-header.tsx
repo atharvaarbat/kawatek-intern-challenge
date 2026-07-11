@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import type { Patient } from "@/types/patient";
 
 interface DashboardHeaderProps {
@@ -20,6 +21,7 @@ export function DashboardHeader({ patient }: DashboardHeaderProps) {
       <div className="flex items-center gap-2">
         <Badge variant="secondary">{patient.id}</Badge>
         <Badge variant="outline">Age {patient.age}</Badge>
+        <ThemeToggle />
       </div>
     </header>
   );
