@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { formatDate } from "@/lib/utils";
 import type { Session } from "@/types/patient";
 
 interface SessionListItemProps {
@@ -22,15 +23,6 @@ interface SessionListItemProps {
 }
 
 const MAX_HINT_ID = "compare-max-hint";
-
-function formatDate(iso: string) {
-  const [year, month, day] = iso.split("-").map(Number);
-  return new Date(year, month - 1, day).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
 
 export function SessionListItem({
   session,

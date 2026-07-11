@@ -10,28 +10,29 @@ const SEVERITY_CONFIG: Record<
     icon: <CheckCircle2 className="h-4 w-4 shrink-0" />,
     label: "Good",
     wrapperClass:
-      "border-green-200 bg-green-50 dark:border-green-800/60 dark:bg-green-950/30",
-    iconClass: "text-green-600 dark:text-green-400",
+      "border-green-500/25 bg-green-500/10 dark:border-green-400/20 dark:bg-green-400/10",
+    iconClass: "text-green-700 dark:text-green-400",
   },
   warning: {
     icon: <AlertTriangle className="h-4 w-4 shrink-0" />,
     label: "Warning",
     wrapperClass:
-      "border-yellow-200 bg-yellow-50 dark:border-yellow-800/60 dark:bg-yellow-950/30",
-    iconClass: "text-yellow-600 dark:text-yellow-400",
+      "border-amber-500/30 bg-amber-500/15 dark:border-amber-400/25 dark:bg-amber-400/10",
+    iconClass: "text-amber-700 dark:text-amber-400",
   },
   serious: {
     icon: <AlertCircle className="h-4 w-4 shrink-0" />,
     label: "Serious",
     wrapperClass:
-      "border-orange-200 bg-orange-50 dark:border-orange-800/60 dark:bg-orange-950/30",
-    iconClass: "text-orange-600 dark:text-orange-400",
+      "border-orange-500/30 bg-orange-500/15 dark:border-orange-400/25 dark:bg-orange-400/10",
+    iconClass: "text-orange-700 dark:text-orange-400",
   },
   critical: {
     icon: <XCircle className="h-4 w-4 shrink-0" />,
     label: "Critical",
-    wrapperClass: "border-red-200 bg-red-50 dark:border-red-800/60 dark:bg-red-950/30",
-    iconClass: "text-red-600 dark:text-red-400",
+    wrapperClass:
+      "border-red-500/25 bg-red-500/10 dark:border-red-400/20 dark:bg-red-400/10",
+    iconClass: "text-red-700 dark:text-red-400",
   },
 };
 

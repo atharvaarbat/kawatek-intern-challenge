@@ -32,12 +32,15 @@ export function ExerciseBreakdownChart({ sessions }: ExerciseBreakdownChartProps
   const data = getExerciseAccuracyRanges(sessions);
   const chartHeight = Math.max(data.length * 56, 200);
 
-  const tableRows = data.map((d) => [
-    d.name,
-    `${d.firstAccuracy}% (${d.firstSessionLabel})`,
-    `${d.latestAccuracy}% (${d.latestSessionLabel})`,
-    `+${d.latestAccuracy - d.firstAccuracy}%`,
-  ]);
+  const tableRows = data.map((d) => {
+    const delta = d.latestAccuracy - d.firstAccuracy;
+    return [
+      d.name,
+      `${d.firstAccuracy}% (${d.firstSessionLabel})`,
+      `${d.latestAccuracy}% (${d.latestSessionLabel})`,
+      `${delta >= 0 ? "+" : ""}${delta}%`,
+    ];
+  });
 
   return (
     <Card>

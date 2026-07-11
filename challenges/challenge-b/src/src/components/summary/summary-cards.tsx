@@ -2,20 +2,8 @@ import { Activity, ClipboardList, Target, TrendingUp } from "lucide-react";
 
 import { KpiCard } from "@/components/summary/kpi-card";
 import { getSessionAverageAccuracy } from "@/lib/derive-metrics";
+import { formatDate } from "@/lib/utils";
 import type { PatientSessionsData } from "@/types/patient";
-
-interface SummaryCardsProps {
-  data: PatientSessionsData;
-}
-
-function formatDate(iso: string) {
-  const [year, month, day] = iso.split("-").map(Number);
-  return new Date(year, month - 1, day).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
 
 export function SummaryCards({ data }: SummaryCardsProps) {
   const { sessions } = data;

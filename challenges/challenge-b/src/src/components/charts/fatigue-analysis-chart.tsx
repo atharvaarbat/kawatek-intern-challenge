@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartTableFallback } from "@/components/charts/chart-table-fallback";
-import { getCanonicalExerciseOrder, getFatigueSeries } from "@/lib/derive-metrics";
+import { getFatigueSeries } from "@/lib/derive-metrics";
 import type { Session } from "@/types/patient";
 
 interface FatigueAnalysisChartProps {
@@ -36,7 +36,6 @@ const EXERCISE_COLORS = [
 
 export function FatigueAnalysisChart({ sessions }: FatigueAnalysisChartProps) {
   const { data, keys } = getFatigueSeries(sessions);
-  const exercises = getCanonicalExerciseOrder(sessions);
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
     String(sessions[sessions.length - 1].session_id),
   );
@@ -156,7 +155,7 @@ export function FatigueAnalysisChart({ sessions }: FatigueAnalysisChartProps) {
                   />
                   <Bar dataKey="fatigue_index" radius={4}>
                     {withinSessionData.map((entry) => {
-                      const exerciseIndex = exercises.indexOf(entry.name);
+                      const exerciseIndex = keys.findIndex((k) => k.label === entry.name);
                       return (
                         <Cell
                           key={entry.name}

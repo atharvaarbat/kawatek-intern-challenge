@@ -31,13 +31,51 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, [theme]);
 
-  // Always print in light mode: drop the `dark` class before the print
-  // snapshot (covers both theme CSS variables and Tailwind `dark:` variants),
-  // then restore it afterwards.
+  // Always print in light mode and fix Recharts chart widths for the page.
+  // beforeprint fires after Chrome has applied the print layout, so
+  // element.clientWidth reflects the actual print column width at that point.
+  // We write that width directly onto the Recharts wrapper div and SVG so the
+  // chart renders at the correct size instead of the screen-measured px value.
   useEffect(() => {
     const root = document.documentElement;
-    const before = () => root.classList.remove("dark");
-    const after = () => root.classList.toggle("dark", theme === "dark");
+
+    const before = () => {
+      root.classList.remove("dark");
+
+      document.querySelectorAll<HTMLElement>('[data-slot="chart"]').forEach((chart) => {
+        const w = chart.clientWidth;
+        if (!w) return;
+
+        chart.querySelectorAll<HTMLElement>(".recharts-wrapper").forEach((wrapper) => {
+          wrapper.dataset.printRestore = wrapper.style.width;
+          wrapper.style.width = `${w}px`;
+        });
+
+        chart.querySelectorAll<HTMLElement>(".recharts-surface").forEach((svg) => {
+          svg.dataset.printRestore = svg.getAttribute("width") ?? "";
+          svg.setAttribute("width", String(w));
+        });
+      });
+    };
+
+    const after = () => {
+      root.classList.toggle("dark", theme === "dark");
+
+      document.querySelectorAll<HTMLElement>(".recharts-wrapper").forEach((wrapper) => {
+        if (wrapper.dataset.printRestore !== undefined) {
+          wrapper.style.width = wrapper.dataset.printRestore;
+          delete wrapper.dataset.printRestore;
+        }
+      });
+
+      document.querySelectorAll<HTMLElement>(".recharts-surface").forEach((svg) => {
+        if (svg.dataset.printRestore !== undefined) {
+          svg.setAttribute("width", svg.dataset.printRestore);
+          delete svg.dataset.printRestore;
+        }
+      });
+    };
+
     window.addEventListener("beforeprint", before);
     window.addEventListener("afterprint", after);
     return () => {

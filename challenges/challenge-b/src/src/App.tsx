@@ -45,7 +45,7 @@ function App() {
   return (
     <>
       <SkipLink />
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 p-4 pb-20 sm:p-6 sm:pb-20">
+      <div className="mx-auto flex max-w-6xl flex-col gap-6 p-4 pb-20 sm:p-6 sm:pb-20 print:p-0 print:pb-0">
         {patientData.status === "loading" && <LoadingSkeleton />}
 
         {patientData.status === "error" && (
@@ -69,7 +69,7 @@ function App() {
               <div className="flex flex-col gap-6">
                 <SummaryCards data={{ patient: patientData.data.patient, sessions }} />
                 <ProgressOverTimeChart sessions={sessions} />
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 print:grid-cols-1">
                   <ExerciseBreakdownChart sessions={sessions} />
                   <RecommendationsPanel
                     data={{ patient: patientData.data.patient, sessions }}

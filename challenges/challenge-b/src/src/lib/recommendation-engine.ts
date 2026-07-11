@@ -1,3 +1,4 @@
+import { getCanonicalExerciseOrder } from "@/lib/derive-metrics";
 import type { PatientSessionsData } from "@/types/patient";
 
 export type Severity = "good" | "warning" | "serious" | "critical";
@@ -16,25 +17,11 @@ const SEVERITY_ORDER: Record<Severity, number> = {
   good: 3,
 };
 
-function getExerciseNames(data: PatientSessionsData): string[] {
-  const seen = new Set<string>();
-  const order: string[] = [];
-  for (const session of data.sessions) {
-    for (const ex of session.exercises) {
-      if (!seen.has(ex.name)) {
-        seen.add(ex.name);
-        order.push(ex.name);
-      }
-    }
-  }
-  return order;
-}
-
 // Rule 1: Ready to progress — accuracy ≥80% for last 3 consecutive sessions of an exercise
 function checkReadyToProgress(data: PatientSessionsData): Recommendation | null {
   const { sessions } = data;
 
-  for (const name of getExerciseNames(data)) {
+  for (const name of getCanonicalExerciseOrder(data.sessions)) {
     const sessionsWithEx = sessions.filter((s) => s.exercises.some((e) => e.name === name));
     const last3 = sessionsWithEx.slice(-3);
 
@@ -63,7 +50,7 @@ function checkFatigueResistance(data: PatientSessionsData): Recommendation | nul
 
   const improving: Array<{ name: string; first: number; latest: number; pct: number }> = [];
 
-  for (const name of getExerciseNames(data)) {
+  for (const name of getCanonicalExerciseOrder(data.sessions)) {
     const series = sessions
       .filter((s) => s.exercises.some((e) => e.name === name))
       .map((s) => s.exercises.find((e) => e.name === name)!.fatigue_index);
@@ -97,7 +84,7 @@ function checkFatigueResistance(data: PatientSessionsData): Recommendation | nul
 function checkNewExerciseFocus(data: PatientSessionsData): Recommendation | null {
   const { sessions } = data;
 
-  for (const name of getExerciseNames(data)) {
+  for (const name of getCanonicalExerciseOrder(data.sessions)) {
     const sessionsWithEx = sessions.filter((s) => s.exercises.some((e) => e.name === name));
     if (sessionsWithEx.length > 4) continue;
 
@@ -188,7 +175,7 @@ function checkReactionTime(data: PatientSessionsData): Recommendation | null {
   const improving: Array<{ name: string; first: number; latest: number; pct: number; count: number }> =
     [];
 
-  for (const name of getExerciseNames(data)) {
+  for (const name of getCanonicalExerciseOrder(data.sessions)) {
     const sessionsWithEx = sessions.filter((s) => s.exercises.some((e) => e.name === name));
     if (sessionsWithEx.length < 5) continue;
 
@@ -251,8 +238,7 @@ const RULES = [
 ];
 
 export function getRecommendations(data: PatientSessionsData): Recommendation[] {
-  return RULES.flatMap((rule) => {
-    const result = rule(data);
-    return result ? [result] : [];
-  }).sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]);
+  return RULES.map((rule) => rule(data))
+    .filter((r): r is Recommendation => r !== null)
+    .sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]);
 }
